@@ -1,0 +1,16 @@
+.user {
+    color: white;
+    float: right;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+  form {
+      display: inline-block;
+      margin: 0 0 0 10px;
+  }
+
+  .greeting {
+      display: inline-block;
+  }
+}

@@ -3,6 +3,6 @@ CREATE TABLE questions (
     "id" serial NOT NULL,
 	"question" text NOT NULL,
 	"answer" text NOT NULL,
-	"creator" text NOT NULL references users(username),
+	"creator" text references users(username) on delete set null,
 	PRIMARY KEY ("id")
 );

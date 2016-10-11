@@ -13,7 +13,7 @@ import {
 
 import './Users.scss';
 
-const renderUser = (user, onDelete) => (
+const renderUser = (user, onDelete, isCurrentUser) => (
     <tr key={user.username}>
         <td>
             {user.username}
@@ -22,7 +22,9 @@ const renderUser = (user, onDelete) => (
             {user.role}
         </td>
         <td>
-            <Button bsStyle="danger" title="Delete this user" onClick={onDelete}>✕</Button>
+            {isCurrentUser ?
+                null :
+                <Button bsStyle="danger" title="Delete this user" onClick={onDelete}>✕</Button>}
         </td>
     </tr>
 );
@@ -107,6 +109,9 @@ const Users = React.createClass({
         return ['username', 'password'].every(field => this.validate(field));
     },
     render: function() {
+        const isCurrentUser = (username) =>
+            this.props.user.map(user => user.username === username).orSome(false);
+
         if (this.props.user.isSome()) {
             return (
                 <div className="admin__user-list">
@@ -120,7 +125,7 @@ const Users = React.createClass({
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.props.users.map(user => renderUser(user, () => this.onDelete(user.username)))}
+                                {this.props.users.map(user => renderUser(user, () => this.onDelete(user.username), isCurrentUser(user.username)))}
                                 {renderAddForm(this.state.key, this.state, this.onChange, this.onSubmit, this.validate)}
                             </tbody>
                         </Table>

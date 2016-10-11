@@ -51,7 +51,7 @@ const renderAddForm = (key, values, onChange, onAdd, validator) => (
                     placeholder="Password"
                     value={values.password}
                     onKeyPress={(ev) => ev.key === 'Enter' ? onAdd() : null}
-                    onChange={(ev) => onChange('answer', ev.target.value)} />
+                    onChange={(ev) => onChange('password', ev.target.value)} />
             </FormGroup>
         </td>
         <td>
@@ -120,7 +120,7 @@ const Users = React.createClass({
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.props.users.map(user => renderUser(user, () => this.onDelete(user.id)))}
+                                {this.props.users.map(user => renderUser(user, () => this.onDelete(user.username)))}
                                 {renderAddForm(this.state.key, this.state, this.onChange, this.onSubmit, this.validate)}
                             </tbody>
                         </Table>

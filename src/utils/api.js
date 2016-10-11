@@ -13,7 +13,8 @@ const json = (...args) => request(...args)
         } catch(err) {
             return Promise.reject(new Error(`Trying to parse an invalid JSON object: ${text}`));
         }
-    });
+    })
+    .catch(err => typeof err.json === 'function' ? err.json().then(val => Promise.reject(val)) : err);
 
 const post = (url, body, opts = {}, ...rest) =>
     json(url, Object.assign({}, opts, {
@@ -25,7 +26,7 @@ const post = (url, body, opts = {}, ...rest) =>
     }), ...rest);
 
 const del = (url, opts = {}, ...rest) =>
-    request(url, Object.assign({}, opts, {method: 'DELETE'}), ...rest);
+    json(url, Object.assign({}, opts, {method: 'DELETE'}), ...rest);
 
 module.exports = {
     request,

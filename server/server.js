@@ -147,21 +147,36 @@ app.get('/api/users', restricted(), adminOnly, function(req, res) {
 
 // TODO only allow admins to create users
 app.post('/api/users', function(req, res) {
-    Promise.try(() => bcrypt.hashAsync(req.body.password, 2)
-        .catch(addBcryptType))
-        .then(hash => db.none('INSERT INTO users (username, password, role) VALUES ($1, $2, $3)', [req.body.username, hash, 0]))
-        .then(() => res.json({success: true})
-    ).catch(err => res.status(500).json({success: false, error: err}));
+    const role = 'user';
+    db.one('select count(username) from users where username = $1', req.body.username)
+        .then(result => {
+            console.log(result);
+            if (result.count === '0') {
+                Promise.try(() => bcrypt.hashAsync(req.body.password, 2)
+                    .catch(addBcryptType))
+                    .then(hash => db.none('INSERT INTO users (username, password, role) VALUES ($1, $2, $3)', [req.body.username, hash, role]))
+                    .then(() => res.json({success: true})
+                ).catch(err => res.status(500).json({success: false, error: err}));
+            } else {
+                res.status(400).send({success: false, error: 'User with an identical name already exists'});
+            }
+        });
 });
 
-app.delete('/api/users/:id', restricted(), adminOnly, function(req, res) {
-    db.none('delete from users where id = $1', req.params.id)
-        .then(() => {
-            res.send({success: true});
-        }).catch(err =>
-            console.log('error happened', err) ||
-            res.status(500).send(err)
-        );
+app.delete('/api/users/:username', restricted(), adminOnly, function(req, res) {
+
+    // disallow deleting self
+    if (req.user.username === req.params.username) {
+        res.status(400).send({success: false, error: 'Unable to delete self'});
+    } else {
+        db.none('delete from users where username = $1', req.params.username)
+            .then(() => {
+                res.send({success: true});
+            }).catch(err =>
+                console.log('error happened', err) ||
+                res.status(500).send(err)
+            );
+    }
 });
 
 app.post('/api/logout', restricted(), function(req, res) {
@@ -184,7 +199,6 @@ app.get('/api/*', function(req, res) {
 
 // catchall endpoint for history.pushState support
 app.get('*', function(request, response) {
-    console.log('catchall');
     response.sendFile('./public/index.html', {root: __dirname + '/../'});
 });
 

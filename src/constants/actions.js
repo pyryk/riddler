@@ -11,7 +11,9 @@ export default keyMirror({
     USER_LIST_LOADED: null,
     USER_LIST_LOAD_FAILED: null,
     ADD_USER: null,
+    ADD_USER_FAILED: null,
     DELETE_USER: null,
+    DELETE_USER_FAILED: null,
     CHANGE_USER_ROLE: null,
     CHANGE_USER_PASSWORD: null
 });

@@ -15,5 +15,8 @@ export default keyMirror({
     DELETE_USER: null,
     DELETE_USER_FAILED: null,
     CHANGE_USER_ROLE: null,
-    CHANGE_USER_PASSWORD: null
+    CHANGE_USER_PASSWORD: null,
+
+    QUESTION_ANSWERED: null,
+    START_GAME: null
 });

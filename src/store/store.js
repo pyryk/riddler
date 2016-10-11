@@ -11,7 +11,17 @@ import mySaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const initialState = Immutable.Map({questions: Immutable.List(), user: Maybe.None(), users: Immutable.List()});
+const initialState = Immutable.Map({
+    questions: Immutable.List(),
+    answers: Immutable.List(),
+    currentQuestion: Maybe.None(),
+    user: Maybe.None(),
+    users: Immutable.List()
+});
+
+const getAnswer = (questionId, answerGiven) => Immutable.Map({questionId, answerGiven});
+
+const getCurrentQuestion = (state) => state.get('currentQuestion').map(n => state.get('questions').get(n));
 
 /* eslint-disable no-use-before-define */
 function reducer(state = initialState, action) {
@@ -21,6 +31,15 @@ function reducer(state = initialState, action) {
             return state;
         case Actions.QUESTION_LIST_LOADED:
             return state.set('questions', Immutable.List(action.questions));
+        case Actions.QUESTION_ANSWERED:
+            console.log('answered', action);
+            return state
+                .set('answers', state.get('answers').push(getAnswer(getCurrentQuestion(state).some().id, action.answer)))
+                .set('currentQuestion', state.get('currentQuestion').map(val => val + 1));
+        case Actions.START_GAME:
+            return state
+                .set('answers', Immutable.List())
+                .set('currentQuestion', Maybe.Some(0));
         case Actions.REQUEST_USER_INFO:
             Api.json('/api/user').then(user =>
                 store.dispatch(createAction(Actions.USER_CHANGED, {user: user.logged ? user : null}))

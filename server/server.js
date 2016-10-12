@@ -166,8 +166,7 @@ app.get('/api/users', restricted(), adminOnly, function(req, res) {
         );
 });
 
-// TODO only allow admins to create users
-app.post('/api/users', function(req, res) {
+app.post('/api/users', restricted(), adminOnly, function(req, res) {
     const role = 'user';
     db.one('select count(username) from users where username = $1', req.body.username)
         .then(result => {

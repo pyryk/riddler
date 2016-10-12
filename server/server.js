@@ -12,9 +12,22 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const serverConfig = require('./config.json');
 
+const env = process.env.NODE_ENV || 'development';
 const secret = process.env.NODE_ENV === 'production' ? process.env.APP_SECRET : 'dev-secret';
 if (!secret) {
     throw new Error('Unable to start in production mode with no APP_SECRET set!');
+}
+
+
+const forceSsl = function (req, res, next) {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(['https://', req.get('Host'), req.url].join(''));
+    }
+    return next();
+};
+
+if (env === 'production') {
+    app.use(forceSsl);
 }
 
 function addBcryptType(err) {
@@ -40,7 +53,6 @@ setupAuth();
 
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../public/'));
-
 
 app.set('forceSSLOptions', {
     enable301Redirects: true,

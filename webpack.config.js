@@ -1,5 +1,8 @@
 /* eslint-env node */
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack = require('webpack');
+
+const env = process.env.NODE_ENV || 'development';
 
 module.exports = {
     entry: [
@@ -35,6 +38,11 @@ module.exports = {
         extensions: ['', '.js', '.jsx', '.scss']
     },
     plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': JSON.stringify(env)
+            }
+        }),
         new ExtractTextPlugin('style.css', {
             allChunks: true
         })

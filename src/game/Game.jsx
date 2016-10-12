@@ -48,36 +48,61 @@ const Game = React.createClass({
 
         return lastAnswer
             .flatMap(answer => lastQuestion.map(question => ({question, answer})))
-            .map(set => set.question.answer === set.answer.answerGiven ? 'Oikein!' : 'Väärin!!')
-            .orSome(null);
+            .map(set => set.question.answer === set.answer.answerGiven ?
+                <p className="correct-answer">Correct!</p> :
+                <p className="incorrect-answer">
+                    Better luck next time! The correct answer was {set.question.answer}.
+                </p>
+            ).orSome(null);
     },
     getGame: function() {
         if (this.props.currentQuestion.isSome()) {
-            const question = this.props.questions[this.props.currentQuestion.some()];
+            const currentNo = this.props.currentQuestion.some();
+            const question = Maybe.fromNull(this.props.questions[currentNo] || null);
 
-            return (
+            return question.map(q => (
                 <div>
-                    <p>{this.getFeedback()}</p>
-                    <p>{question.question}</p>
+                    <p>{q.question}</p>
                     <p>Answer<input
                         value={this.state.answer}
                         onKeyPress={(ev) => ev.key === 'Enter' ? this.onAnswerSubmit() : null}
                         onChange={this.onAnswerChange} /></p>
                 </div>
-            );
+            )).orSome(<div>Internal error: question number {currentNo} was not found.</div>);
         } else {
             return (
                 <div>
-                    <Button bsStyle="primary" bsSize="large" onClick={this.props.onStart}>Start</Button>
+                    <Button bsStyle="primary" bsSize="large" onClick={this.props.onStart}>
+                        {this.getStartButtonLabel()}
+                    </Button>
                 </div>
             );
         }
+    },
+    getStartButtonLabel: function() {
+        return this.showResults() ? 'Start again' : 'Start';
+    },
+    showResults: function() {
+        return this.props.currentQuestion.isNone() && this.props.answers.length > 0;
+    },
+    getResults: function() {
+        return (
+            <div>
+                You got
+                <span className="right-answer-count">
+                    {this.props.answers.filter(a => a.correct).length}
+                </span>
+                answers right!
+            </div>
+        );
     },
     render: function() {
         console.log('game props', this.props);
         return (
             <div>
                 <h1>Riddler</h1>
+                {this.props.answers.length > 0 ? this.getFeedback() : null}
+                {this.showResults() ? this.getResults() : null}
                 {this.props.questions.length > 0 ?
                     this.getGame() :
                     <p>No questions added.</p>}

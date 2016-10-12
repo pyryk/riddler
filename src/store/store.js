@@ -19,7 +19,11 @@ const initialState = Immutable.Map({
     users: Immutable.List()
 });
 
-const getAnswer = (questionId, answerGiven) => Immutable.Map({questionId, answerGiven});
+const getAnswer = (question, answerGiven) => Immutable.Map({
+    questionId: question.id,
+    answerGiven: answerGiven,
+    correct: question.answer === answerGiven
+});
 
 const getCurrentQuestion = (state) => state.get('currentQuestion').map(n => state.get('questions').get(n));
 

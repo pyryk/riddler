@@ -9,7 +9,7 @@ const bcrypt = Promise.promisifyAll(require('bcrypt'));
 const Authentication = require('./Authentication');
 const ensureLogin = require('connect-ensure-login');
 const bodyParser = require('body-parser');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const serverConfig = require('./config.json');
 
 const env = process.env.NODE_ENV || 'development';
@@ -42,7 +42,13 @@ const db = pgp(config);
 
 function setupAuth() {
     app.use(bodyParser.urlencoded({ extended: true }));
-    app.use(session({ secret: secret, resave: false, saveUninitialized: false }));
+    app.use(cookieSession({
+        secret: secret,
+        resave: false,
+        saveUninitialized: false,
+        httpOnly: true,
+        secureProxy: env === 'production'
+    }));
     const auth = new Authentication(db, passport);
     passport.use(new LocalStrategy(auth.authenticate));
     app.use(passport.initialize());
@@ -105,13 +111,8 @@ app.get('/api/user', function(req, res) {
 const restricted = () => ensureLogin.ensureLoggedIn(serverConfig.login);
 
 app.post('/api/logout', restricted(), function(req, res) {
-    req.session.destroy(function(err) {
-        if (err) {
-            res.send('Error when logging out.');
-            return;
-        }
-        res.redirect('/');
-    });
+    req.session = null;
+    res.redirect('/');
 });
 
 app.get('/profile', restricted(), function(req, res) {

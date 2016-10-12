@@ -23,6 +23,11 @@ const getAnswer = (questionId, answerGiven) => Immutable.Map({questionId, answer
 
 const getCurrentQuestion = (state) => state.get('currentQuestion').map(n => state.get('questions').get(n));
 
+const isLastQuestion = (questionNo, questions) => questionNo >= questions.size - 1;
+
+const getNextQuestionNo = (questionNo, questions) =>
+    questionNo.flatMap(n => isLastQuestion(n, questions) ? Maybe.None() : Maybe.Some(n + 1));
+
 /* eslint-disable no-use-before-define */
 function reducer(state = initialState, action) {
     switch (action.type) {
@@ -34,8 +39,8 @@ function reducer(state = initialState, action) {
         case Actions.QUESTION_ANSWERED:
             console.log('answered', action);
             return state
-                .set('answers', state.get('answers').push(getAnswer(getCurrentQuestion(state).some().id, action.answer)))
-                .set('currentQuestion', state.get('currentQuestion').map(val => val + 1));
+                .set('answers', state.get('answers').push(getAnswer(getCurrentQuestion(state).some(), action.answer)))
+                .set('currentQuestion', getNextQuestionNo(state.get('currentQuestion'), state.get('questions')));
         case Actions.START_GAME:
             return state
                 .set('answers', Immutable.List())

@@ -140,7 +140,7 @@ app.delete('/api/questions/:id', restricted(), function(req, res) {
         );
 });
 
-app.put('/api/users', restricted(), function(req, res) {
+app.put('/api/users/updatepassword', restricted(), function(req, res) {
     Promise.try(() => bcrypt.hashAsync(req.body.password, 2)
         .catch(addBcryptType))
         .then(hash => db.none('UPDATE users set password = $1 where username = $2', [hash, req.body.username]))

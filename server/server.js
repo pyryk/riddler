@@ -160,6 +160,8 @@ app.post('/api/users', function(req, res) {
             } else {
                 res.status(400).send({success: false, error: 'User with an identical name already exists'});
             }
+        }).catch(err => {
+            res.status(500).send({success: false, error: err});
         });
 });
 

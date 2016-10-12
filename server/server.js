@@ -41,6 +41,14 @@ setupAuth();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../public/'));
 
+
+app.set('forceSSLOptions', {
+    enable301Redirects: true,
+    trustXFPHeader: false,
+    httpsPort: 443,
+    sslRequiredMessage: 'SSL Required.'
+});
+
 app.get('/api/generatehash/:password', function(req, res) {
     Promise.try(function() {
         return bcrypt.hashAsync(req.params.password, 10).catch(addBcryptType);

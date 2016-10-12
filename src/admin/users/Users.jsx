@@ -86,8 +86,20 @@ const Users = React.createClass({
             users: []
         };
     },
+    componentWillReceiveProps: function(nextProps) {
+        const nextUser = nextProps.user.map(u => u.username);
+        const prevUser = this.props.user.map(u => u.username);
+        if (nextUser.isSome() && (prevUser.isNone() || nextUser.some() !== prevUser.some())) {
+            this.loadUsersIfAllowed(nextProps.user);
+        }
+    },
     componentDidMount: function() {
-        this.props.onInit();
+        this.loadUsersIfAllowed(this.props.user);
+    },
+    loadUsersIfAllowed: function(user) {
+        if (user.map(u => u.role === 'admin').orSome(false)) {
+            this.props.onInit();
+        }
     },
     onChange: function(field, value) {
         this.setState({[field]: value});

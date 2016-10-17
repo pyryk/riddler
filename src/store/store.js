@@ -16,7 +16,8 @@ const initialState = Immutable.Map({
     answers: Immutable.List(),
     currentQuestion: Maybe.None(),
     user: Maybe.None(),
-    users: Immutable.List()
+    users: Immutable.List(),
+    gameType: 'freetext'
 });
 
 const getAnswer = (question, answerGiven) => Immutable.Map({
@@ -49,6 +50,12 @@ function reducer(state = initialState, action) {
             return state
                 .set('answers', Immutable.List())
                 .set('currentQuestion', Maybe.Some(0));
+        case Actions.STOP_GAME:
+            return state
+                .set('currentQuestion', Maybe.None());
+        case Actions.GAME_TYPE_CHANGED:
+            return state
+                .set('gameType', action.gameType);
         case Actions.REQUEST_USER_INFO:
             Api.json('/api/user').then(user =>
                 store.dispatch(createAction(Actions.USER_CHANGED, {user: user.logged ? user : null}))

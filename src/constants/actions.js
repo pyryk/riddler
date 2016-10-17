@@ -18,5 +18,7 @@ export default keyMirror({
     CHANGE_USER_PASSWORD: null,
 
     QUESTION_ANSWERED: null,
-    START_GAME: null
+    START_GAME: null,
+    STOP_GAME: null,
+    GAME_TYPE_CHANGED: null
 });

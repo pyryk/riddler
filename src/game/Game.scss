@@ -1,7 +1,21 @@
 .right-answer-count {
     display: inline-block;
-    margin: 0 0.5em;
+    margin: 0 1ex;
     font-weight: bold;
+
+    &.result-c {
+        color: #c9302c;
+    }
+    &.result-b {
+        color: #ec971f;
+    }
+    &.result-a {
+        color: #449d44;
+    }
+}
+.total-answer-count {
+    display: inline-block;
+    margin: 0 1ex;
 }
 
 .stop-label {

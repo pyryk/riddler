@@ -160,12 +160,33 @@ const Game = React.createClass({
     showResults: function() {
         return this.props.currentQuestion.isNone() && this.props.answers.length > 0;
     },
+    getResultGrade: function(total, correct) {
+        if (total.length === 0) {
+            return '';
+        } else {
+            const percentage = correct.length / total.length;
+            if (percentage >= 0.66) {
+                return 'result-a';
+            } else if (percentage >= 0.33) {
+                return 'result-b';
+            } else {
+                return 'result-c';
+            }
+        }
+    },
     getResults: function() {
+        const answers = this.props.answers;
+        const correct = answers.filter(a => a.correct);
+        const result = this.getResultGrade(answers, correct);
         return (
             <Panel header={<h3>Results</h3>}>
                 You got
-                <span className="right-answer-count">
-                    {this.props.answers.filter(a => a.correct).length}
+                <span className={`right-answer-count ${result}`}>
+                    {correct.length}
+                </span>
+                /
+                <span className="total-answer-count">
+                    {answers.length}
                 </span>
                 answers correct!
             </Panel>

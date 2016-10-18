@@ -197,8 +197,8 @@ const Game = React.createClass({
             answer,
             question: this.props.questions.find(q => q.id === answer.questionId)
         })).map(({answer, question}) => answer.correct ?
-            <p className="correct-answer">{question.question} = {answer.answerGiven} ✓</p> :
-            <p className="incorrect-answer">{question.question} = {answer.answerGiven} ✖ (The correct answer was {question.answer})</p>
+            <p key={question.id} className="correct-answer">{question.question} = {answer.answerGiven} ✓</p> :
+            <p key={question.id} className="incorrect-answer">{question.question} = {answer.answerGiven} ✖ (The correct answer was {question.answer})</p>
         );
 
         return (

@@ -25,7 +25,7 @@ export default React.createClass({
     },
     render: function() {
         return (
-            <Navbar inverse>
+            <Navbar>
             <Navbar.Header>
                 <Navbar.Brand>
                     <Link to="/">Riddler</Link>

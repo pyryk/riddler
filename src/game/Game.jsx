@@ -53,11 +53,25 @@ const Game = React.createClass({
 
         return lastAnswer
             .flatMap(answer => lastQuestion.map(question => ({question, answer})))
-            .map(({answer, question}) => answer.correct ?
-                <p className="correct-answer">Correct!</p> :
-                <p className="incorrect-answer">
-                    Better luck next time! The correct answer was {question.answer}.
-                </p>
+            .map(({answer, question}) => {
+                const content = answer.correct ?
+                    <p className="correct-answer">Your answer was correct!</p> :
+                    <p className="incorrect-answer">
+                        Better luck next time! The correct answer was {question.answer}.
+                    </p>;
+
+                const header = (
+                    <h3 className={answer.correct ? 'correct-answer' : 'incorrect-answer'}>
+                        {answer.correct ? 'Great!' : 'Too bad!'}
+                    </h3>
+                );
+
+                return (
+                    <Panel header={header}>
+                        {content}
+                    </Panel>
+                );
+            }
             ).orSome(null);
     },
     getCurrentQuestion: function() {

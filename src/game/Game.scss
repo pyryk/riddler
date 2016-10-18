@@ -1,16 +1,28 @@
+$positive-color: #449d44;
+$neutral-color: #ec971f;
+$negative-color: #c9302c;
+
+.correct-answer {
+    color: $positive-color;
+}
+
+.incorrect-answer {
+    color: $negative-color;
+}
+
 .right-answer-count {
     display: inline-block;
     margin: 0 1ex;
     font-weight: bold;
 
     &.result-c {
-        color: #c9302c;
+        color: $negative-color;
     }
     &.result-b {
-        color: #ec971f;
+        color: $neutral-color;
     }
     &.result-a {
-        color: #449d44;
+        color: $positive-color;
     }
 }
 .total-answer-count {

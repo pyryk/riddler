@@ -113,7 +113,7 @@ const Game = React.createClass({
                             onKeyPress={(ev) => ev.key === 'Enter' ? this.onAnswerSubmit(ev) : null}
                             onChange={this.onAnswerChange} />
                     </FormGroup>
-                    <Button>Answer</Button>
+                    <Button onClick={ev => this.onAnswerSubmit(ev)}>Answer</Button>
                 </Form>
             );
         } else {

@@ -17,6 +17,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import Game from './game/Game';
 import Questions from './admin/questions/Questions';
 import Users from './admin/users/Users';
+import './index.scss';
 
 // TODO extract to a separate file
 const mapStateToProps = state => state.main.toJS();
@@ -41,6 +42,12 @@ const MainApplication = React.createClass({
                 <Row>
                     <Col xs={12} md={12}>
                         {this.props.children}
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} md={12}>
+                        <span className="credits">Written by Pyry Kröger. Code available at</span>
+                        <a href="https://github.com/pyryk/riddler">pyryk/riddler</a>.
                     </Col>
                 </Row>
             </Grid>

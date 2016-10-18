@@ -53,10 +53,10 @@ const Game = React.createClass({
 
         return lastAnswer
             .flatMap(answer => lastQuestion.map(question => ({question, answer})))
-            .map(set => set.question.answer === set.answer.answerGiven ?
+            .map(({answer, question}) => answer.correct ?
                 <p className="correct-answer">Correct!</p> :
                 <p className="incorrect-answer">
-                    Better luck next time! The correct answer was {set.question.answer}.
+                    Better luck next time! The correct answer was {question.answer}.
                 </p>
             ).orSome(null);
     },

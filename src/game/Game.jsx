@@ -192,17 +192,31 @@ const Game = React.createClass({
         const answers = this.props.answers;
         const correct = answers.filter(a => a.correct);
         const result = this.getResultGrade(answers, correct);
+
+        const details = this.props.answers.map(answer => ({
+            answer,
+            question: this.props.questions.find(q => q.id === answer.questionId)
+        })).map(({answer, question}) => answer.correct ?
+            <p className="correct-answer">{question.question} = {answer.answerGiven} ✓</p> :
+            <p className="incorrect-answer">{question.question} = {answer.answerGiven} ✖ (The correct answer was {question.answer})</p>
+        );
+
         return (
             <Panel header={<h3>Results</h3>}>
-                You got
-                <span className={`right-answer-count ${result}`}>
-                    {correct.length}
-                </span>
-                /
-                <span className="total-answer-count">
-                    {answers.length}
-                </span>
-                answers correct!
+                <p>
+                    You got
+                    <span className={`right-answer-count ${result}`}>
+                        {correct.length}
+                    </span>
+                    /
+                    <span className="total-answer-count">
+                        {answers.length}
+                    </span>
+                    answers correct:
+                </p>
+                <div className="result-details">
+                    {details}
+                </div>
             </Panel>
         );
     },

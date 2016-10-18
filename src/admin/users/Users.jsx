@@ -111,7 +111,9 @@ const Users = React.createClass({
         }
     },
     onDelete: function(id) {
-        this.props.onDelete(id);
+        if (confirm('Are you sure?')) {
+            this.props.onDelete(id);
+        }
     },
     validate: function(field) {
         return Boolean(this.state[field]);

@@ -225,7 +225,6 @@ const Game = React.createClass({
     render: function() {
         return (
             <div>
-                <h1>Riddler</h1>
                 {this.props.answers.length > 0 ? this.getFeedback() : null}
                 {this.showResults() ? this.getResults() : null}
                 {this.props.questions.length > 0 ?

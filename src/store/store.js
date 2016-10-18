@@ -51,6 +51,7 @@ function reducer(state = initialState, action) {
                 .set('currentQuestion', getNextQuestionNo(state.get('currentQuestion'), state.get('questions'), state.get('gameQuestionCount')));
         case Actions.START_GAME:
             return state
+                .set('questions', Immutable.List(_.shuffle(state.get('questions').toArray())))
                 .set('answers', Immutable.List())
                 .set('currentQuestion', Maybe.Some(0));
         case Actions.STOP_GAME:

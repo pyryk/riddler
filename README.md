@@ -1,6 +1,6 @@
 # Riddler
 
-A simple quiz with user-manageable questions
+A simple quiz with user-manageable questions. See the app live at [https://chilicorn-riddler.herokuapp.com](https://chilicorn-riddler.herokuapp.com).
 
 ## Development environment
 

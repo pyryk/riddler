@@ -7,6 +7,7 @@ import { Maybe } from 'monet';
 import { routerReducer } from 'react-router-redux';
 import { reducer as UserReducer } from './Users';
 import createSagaMiddleware from 'redux-saga';
+import _ from 'lodash';
 import mySaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -17,7 +18,8 @@ const initialState = Immutable.Map({
     currentQuestion: Maybe.None(),
     user: Maybe.None(),
     users: Immutable.List(),
-    gameType: 'freetext'
+    gameType: 'freetext',
+    gameQuestionCount: Maybe.Some(10)
 });
 
 const getAnswer = (question, answerGiven) => Immutable.Map({
@@ -28,10 +30,11 @@ const getAnswer = (question, answerGiven) => Immutable.Map({
 
 const getCurrentQuestion = (state) => state.get('currentQuestion').map(n => state.get('questions').get(n));
 
-const isLastQuestion = (questionNo, questions) => questionNo >= questions.size - 1;
+const isLastQuestion = (questionNo, questions, maxQuestions) =>
+    questionNo >= questions.size - 1 || maxQuestions.map(count => questionNo >= count - 1).orSome(false);
 
-const getNextQuestionNo = (questionNo, questions) =>
-    questionNo.flatMap(n => isLastQuestion(n, questions) ? Maybe.None() : Maybe.Some(n + 1));
+const getNextQuestionNo = (questionNo, questions, maxQuestions) =>
+    questionNo.flatMap(n => isLastQuestion(n, questions, maxQuestions) ? Maybe.None() : Maybe.Some(n + 1));
 
 /* eslint-disable no-use-before-define */
 function reducer(state = initialState, action) {
@@ -45,7 +48,7 @@ function reducer(state = initialState, action) {
             console.log('answered', action);
             return state
                 .set('answers', state.get('answers').push(getAnswer(getCurrentQuestion(state).some(), action.answer)))
-                .set('currentQuestion', getNextQuestionNo(state.get('currentQuestion'), state.get('questions')));
+                .set('currentQuestion', getNextQuestionNo(state.get('currentQuestion'), state.get('questions'), state.get('gameQuestionCount')));
         case Actions.START_GAME:
             return state
                 .set('answers', Immutable.List())
@@ -56,6 +59,9 @@ function reducer(state = initialState, action) {
         case Actions.GAME_TYPE_CHANGED:
             return state
                 .set('gameType', action.gameType);
+        case Actions.GAME_QUESTION_COUNT_CHANGED:
+            return state
+                .set('gameQuestionCount', action.count);
         case Actions.REQUEST_USER_INFO:
             Api.json('/api/user').then(user =>
                 store.dispatch(createAction(Actions.USER_CHANGED, {user: user.logged ? user : null}))

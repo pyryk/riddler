@@ -15,11 +15,13 @@ const Game = React.createClass({
         answers: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
         gameType: React.PropTypes.oneOf(['freetext', 'multiple']).isRequired,
         currentQuestion: MaybeType,
+        gameQuestionCount: MaybeType,
         onInit: React.PropTypes.func.isRequired,
         onStart: React.PropTypes.func.isRequired,
         onStop: React.PropTypes.func.isRequired,
         onAnswer: React.PropTypes.func.isRequired,
-        gameTypeChanged: React.PropTypes.func.isRequired
+        gameTypeChanged: React.PropTypes.func.isRequired,
+        questionCountChanged: React.PropTypes.func.isRequired
     },
     getDefaultProps: function() {
         return {
@@ -139,6 +141,9 @@ const Game = React.createClass({
         }
     },
     getStartForm: function() {
+        const questionCountValues = [3, 10, 20, 40, -1].map(count => (
+            <option key={count} value={count}>{count < 0 ? 'All' : count} questions</option>)
+        );
         return (
             <Panel header={<h3>Game Settings</h3>}>
                 <FormGroup>
@@ -159,11 +164,27 @@ const Game = React.createClass({
                         Multiple choice
                     </Radio>
                 </FormGroup>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        onChange={(ev) => this.props.questionCountChanged(this.parseQuestionCountValue(ev.target.value))}
+                        value={this.props.gameQuestionCount.orSome(-1)}>
+                        {questionCountValues}
+                    </FormControl>
+                </FormGroup>
                 <Button bsStyle="primary" onClick={this.onStart}>
                     {this.getStartButtonLabel()}
                 </Button>
             </Panel>
         );
+    },
+    parseQuestionCountValue: function(value) {
+        const number = parseInt(value, 10);
+        if (number < 0) {
+            return Maybe.None();
+        } else {
+            return Maybe.Some(number);
+        }
     },
     onStart: function() {
         this.props.onStart();
@@ -241,7 +262,8 @@ const dispatchToProps = dispatch => ({
     onAnswer: (answer) => dispatch(createAction(Actions.QUESTION_ANSWERED, {answer})),
     onStart: () => dispatch(createAction(Actions.START_GAME)),
     onStop: () => dispatch(createAction(Actions.STOP_GAME)),
-    gameTypeChanged: (newType) => dispatch(createAction(Actions.GAME_TYPE_CHANGED, {gameType: newType}))
+    gameTypeChanged: (newType) => dispatch(createAction(Actions.GAME_TYPE_CHANGED, {gameType: newType})),
+    questionCountChanged: (newCount) => dispatch(createAction(Actions.GAME_QUESTION_COUNT_CHANGED, {count: newCount}))
 });
 
 export default connect(stateToProps, dispatchToProps)(Game);

@@ -1,5 +1,3 @@
-import './scss/imagehover.scss';
-import './scss/style.scss';
 import 'whatwg-fetch';
 import 'babel-polyfill';
 import React from 'react';

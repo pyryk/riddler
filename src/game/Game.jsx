@@ -57,7 +57,7 @@ const Game = React.createClass({
                 const content = answer.correct ?
                     <p className="correct-answer">Your answer was correct!</p> :
                     <p className="incorrect-answer">
-                        Better luck next time! The correct answer was {question.answer}.
+                        Better luck next time! The correct answer was <strong>{question.answer}</strong>.
                     </p>;
 
                 const header = (
@@ -198,7 +198,9 @@ const Game = React.createClass({
             question: this.props.questions.find(q => q.id === answer.questionId)
         })).map(({answer, question}) => answer.correct ?
             <p key={question.id} className="correct-answer">{question.question} = {answer.answerGiven} ✓</p> :
-            <p key={question.id} className="incorrect-answer">{question.question} = {answer.answerGiven} ✖ (The correct answer was {question.answer})</p>
+            <p key={question.id} className="incorrect-answer">
+                {question.question} = {answer.answerGiven} ✖ (The correct answer was <strong>{question.answer}</strong>)
+            </p>
         );
 
         return (

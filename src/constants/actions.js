@@ -16,6 +16,13 @@ export default keyMirror({
     DELETE_USER_FAILED: null,
     CHANGE_USER_ROLE: null,
     CHANGE_USER_PASSWORD: null,
+    CATEGORIES_LOADED: null,
+    CATEGORY_LOADING_FAILED: null,
+    REQUEST_CATEGORIES: null,
+    ADD_CATEGORY: null,
+    ADD_CATEGORY_FAILED: null,
+    DELETE_CATEGORY: null,
+    DELETE_CATEGORY_FAILED: null,
 
     QUESTION_ANSWERED: null,
     START_GAME: null,

@@ -4,7 +4,15 @@ import { createAction } from '../utils/ActionCreator';
 import Actions from '../constants/actions';
 import { Maybe as MaybeType } from '../utils/PropTypes';
 import { Maybe } from 'monet';
-import { Button, Radio, FormGroup, Form, FormControl, Panel } from 'react-bootstrap';
+import {
+    Button,
+    Radio,
+    FormGroup,
+    Form,
+    FormControl,
+    Panel,
+    ControlLabel
+} from 'react-bootstrap';
 import _ from 'lodash';
 
 import './Game.scss';
@@ -146,6 +154,15 @@ const Game = React.createClass({
         );
         return (
             <Panel header={<h3>Game Settings</h3>}>
+                <FormGroup>
+                    <ControlLabel>Category</ControlLabel>
+                    <FormControl /* TODO */
+                        componentClass="select"
+                        onChange={(ev) => this.props.questionCountChanged(this.parseQuestionCountValue(ev.target.value))}
+                        value={this.props.gameQuestionCount.orSome(-1)}>
+                        {questionCountValues}
+                    </FormControl>
+                </FormGroup>
                 <FormGroup>
                     <Radio
                         name="gameType"

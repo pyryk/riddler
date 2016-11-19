@@ -8,7 +8,8 @@ import {
     Form,
     FormControl,
     FormGroup,
-    Button
+    Button,
+    Panel
 } from 'react-bootstrap';
 
 import './Users.scss';
@@ -128,8 +129,7 @@ const Users = React.createClass({
 
         if (this.props.user.isSome()) {
             return (
-                <div className="admin__user-list">
-                    <h1>Users</h1>
+                <Panel header={<h3>Users</h3>} className="admin__user-list">
                     <Form>
                         <Table>
                             <thead>
@@ -144,7 +144,7 @@ const Users = React.createClass({
                             </tbody>
                         </Table>
                     </Form>
-                </div>
+                </Panel>
             );
         } else {
             return <div>No access - login required</div>;

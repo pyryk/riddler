@@ -32,5 +32,6 @@ module.exports = {
     request,
     json,
     post,
-    del
+    del,
+    delete: del
 };

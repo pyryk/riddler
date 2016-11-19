@@ -3,3 +3,5 @@ public/style.css
 public/bundle.js
 
 public/*.map
+
+.env

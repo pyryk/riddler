@@ -18,6 +18,7 @@ const initialState = Immutable.Map({
     currentQuestion: Maybe.None(),
     user: Maybe.None(),
     users: Immutable.List(),
+    categories: Immutable.List(),
     gameType: 'freetext',
     gameQuestionCount: Maybe.Some(10)
 });
@@ -68,6 +69,8 @@ function reducer(state = initialState, action) {
                 store.dispatch(createAction(Actions.USER_CHANGED, {user: user.logged ? user : null}))
             );
             return state;
+        case Actions.CATEGORIES_LOADED:
+            return state.set('categories', action.categories);
         case Actions.USER_CHANGED:
             if (action.user) {
                 return state.set('user', Maybe.Some(action.user));
@@ -75,7 +78,7 @@ function reducer(state = initialState, action) {
                 return state.set('user', Maybe.None());
             }
         case Actions.ADD_QUESTION:
-            Api.post('/api/questions', {question: action.question, answer: action.answer})
+            Api.post('/api/questions', {question: action.question, answer: action.answer, category: action.category})
                 .then(() => store.dispatch(createAction(Actions.REQUEST_QUESTION_LIST)));
             return state;
         case Actions.DELETE_QUESTION:

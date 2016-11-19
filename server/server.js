@@ -88,8 +88,13 @@ app.get('/api/testpassword/:password/:hash', function(req, res) {
     });
 });
 app.get('/api/questions', function(req, res) {
-    db.manyOrNone('select * from questions')
+    db.manyOrNone('select q.id, q.question, q.answer, q.creator, c.name as category from questions as q left join categories as c on q.category = c.id')
         .then(questions => res.send(questions))
+        .catch(err => res.status(500).send({success: false, error: err}));
+});
+app.get('/api/categories', function(req, res) {
+    db.manyOrNone('select * from categories')
+        .then(categories => res.send(categories))
         .catch(err => res.status(500).send({success: false, error: err}));
 });
 
@@ -120,8 +125,19 @@ app.get('/profile', restricted(), function(req, res) {
 });
 
 app.post('/api/questions', restricted(), function(req, res) {
-    db.one('insert into questions(question, answer, creator) values ($1, $2, $3) returning id',
-        [req.body.question, req.body.answer, req.user.username])
+    db.one('insert into questions(question, answer, category, creator) values ($1, $2, $3, $4) returning id',
+        [req.body.question, req.body.answer, req.body.category, req.user.username])
+        .then((result) => {
+            res.send(result);
+        }).catch(err =>
+            console.log('error happened', err) ||
+            res.status(500).send(err)
+        );
+});
+
+app.post('/api/categories', restricted(), function(req, res) {
+    db.one('insert into categories(name, parent, creator) values ($1, $2, $3) returning id',
+        [req.body.name, req.body.parent, req.user.username])
         .then((result) => {
             res.send(result);
         }).catch(err =>
@@ -132,6 +148,16 @@ app.post('/api/questions', restricted(), function(req, res) {
 
 app.delete('/api/questions/:id', restricted(), function(req, res) {
     db.none('delete from questions where id = $1', req.params.id)
+        .then(() => {
+            res.send({success: true});
+        }).catch(err =>
+            console.log('error happened', err) ||
+            res.status(500).send(err)
+        );
+});
+
+app.delete('/api/categories/:id', restricted(), function(req, res) {
+    db.none('delete from categories where id = $1', req.params.id)
         .then(() => {
             res.send({success: true});
         }).catch(err =>

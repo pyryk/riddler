@@ -20,16 +20,20 @@ import './Game.scss';
 const Game = React.createClass({
     propTypes: {
         questions: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
+        gameQuestions: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
         answers: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
+        categories: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
         gameType: React.PropTypes.oneOf(['freetext', 'multiple']).isRequired,
         currentQuestion: MaybeType,
         gameQuestionCount: MaybeType,
+        gameCategory: MaybeType,
         onInit: React.PropTypes.func.isRequired,
         onStart: React.PropTypes.func.isRequired,
         onStop: React.PropTypes.func.isRequired,
         onAnswer: React.PropTypes.func.isRequired,
         gameTypeChanged: React.PropTypes.func.isRequired,
-        questionCountChanged: React.PropTypes.func.isRequired
+        questionCountChanged: React.PropTypes.func.isRequired,
+        categoryChanged: React.PropTypes.func.isRequired
     },
     getDefaultProps: function() {
         return {
@@ -58,7 +62,7 @@ const Game = React.createClass({
         const lastAnswer = Maybe.fromNull(_.last(this.props.answers));
 
         const lastQuestion = lastAnswer.flatMap(answer =>
-            Maybe.fromNull(this.props.questions.find(q => q.id === answer.questionId) || null)
+            Maybe.fromNull(this.props.gameQuestions.find(q => q.id === answer.questionId) || null)
         );
 
         return lastAnswer
@@ -86,7 +90,7 @@ const Game = React.createClass({
     },
     getCurrentQuestion: function() {
         return this.props.currentQuestion
-            .flatMap(n => Maybe.fromNull(this.props.questions[n] || null));
+            .flatMap(n => Maybe.fromNull(this.props.gameQuestions[n] || null));
     },
     getGame: function() {
         if (this.props.currentQuestion.isSome()) {
@@ -111,7 +115,7 @@ const Game = React.createClass({
             return null;
         } else {
             return this.getCurrentQuestion().map(q => {
-                const choices = _(this.props.questions)
+                const choices = _(this.props.gameQuestions)
                     .shuffle()
                     .filter(q2 => q2.id !== q.id) // make sure the correct answer is not included twice
                     .filter(q2 => q2.answer !== q.answer) // make sure answers identical to the correct one are not included
@@ -149,6 +153,8 @@ const Game = React.createClass({
         }
     },
     getStartForm: function() {
+        const categories = this.props.categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>);
+        const firstCategoryId = Maybe.fromNull(_.get(this.props.categories[0], 'id', null));
         const questionCountValues = [3, 10, 20, 40, -1].map(count => (
             <option key={count} value={count}>{count < 0 ? 'All' : count} questions</option>)
         );
@@ -156,11 +162,11 @@ const Game = React.createClass({
             <Panel header={<h3>Game Settings</h3>}>
                 <FormGroup>
                     <ControlLabel>Category</ControlLabel>
-                    <FormControl /* TODO */
+                    <FormControl
                         componentClass="select"
-                        onChange={(ev) => this.props.questionCountChanged(this.parseQuestionCountValue(ev.target.value))}
-                        value={this.props.gameQuestionCount.orSome(-1)}>
-                        {questionCountValues}
+                        onChange={(ev) => this.props.categoryChanged(ev.target.value)}
+                        value={this.props.gameCategory.orElse(firstCategoryId).orSome(undefined)}>
+                        {categories}
                     </FormControl>
                 </FormGroup>
                 <FormGroup>
@@ -233,7 +239,7 @@ const Game = React.createClass({
 
         const details = this.props.answers.map(answer => ({
             answer,
-            question: this.props.questions.find(q => q.id === answer.questionId)
+            question: this.props.gameQuestions.find(q => q.id === answer.questionId)
         })).map(({answer, question}) => answer.correct ?
             <p key={question.id} className="correct-answer">{question.question} = {answer.answerGiven} ✓</p> :
             <p key={question.id} className="incorrect-answer">
@@ -275,12 +281,16 @@ const Game = React.createClass({
 
 const stateToProps = state => state.main.toJS();
 const dispatchToProps = dispatch => ({
-    onInit: () => dispatch(createAction(Actions.REQUEST_QUESTION_LIST)),
+    onInit: () => {
+        dispatch(createAction(Actions.REQUEST_QUESTION_LIST));
+        dispatch(createAction(Actions.REQUEST_CATEGORIES));
+    },
     onAnswer: (answer) => dispatch(createAction(Actions.QUESTION_ANSWERED, {answer})),
     onStart: () => dispatch(createAction(Actions.START_GAME)),
     onStop: () => dispatch(createAction(Actions.STOP_GAME)),
     gameTypeChanged: (newType) => dispatch(createAction(Actions.GAME_TYPE_CHANGED, {gameType: newType})),
-    questionCountChanged: (newCount) => dispatch(createAction(Actions.GAME_QUESTION_COUNT_CHANGED, {count: newCount}))
+    questionCountChanged: (newCount) => dispatch(createAction(Actions.GAME_QUESTION_COUNT_CHANGED, {count: newCount})),
+    categoryChanged: (category) => dispatch(createAction(Actions.GAME_CATEGORY_CHANGED, {category: category}))
 });
 
 export default connect(stateToProps, dispatchToProps)(Game);

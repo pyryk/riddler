@@ -28,5 +28,6 @@ export default keyMirror({
     START_GAME: null,
     STOP_GAME: null,
     GAME_TYPE_CHANGED: null,
-    GAME_QUESTION_COUNT_CHANGED: null
+    GAME_QUESTION_COUNT_CHANGED: null,
+    GAME_CATEGORY_CHANGED: null
 });

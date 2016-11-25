@@ -88,7 +88,8 @@ app.get('/api/testpassword/:password/:hash', function(req, res) {
     });
 });
 app.get('/api/questions', function(req, res) {
-    db.manyOrNone('select q.id, q.question, q.answer, q.creator, c.name as category from questions as q left join categories as c on q.category = c.id')
+    db.manyOrNone('select q.id, q.question, q.answer, q.creator, c.name as category, c.id as categoryId' +
+        ' from questions as q left join categories as c on q.category = c.id')
         .then(questions => res.send(questions))
         .catch(err => res.status(500).send({success: false, error: err}));
 });

@@ -66,6 +66,7 @@ const renderAddForm = (key, values, categories, onChange, onAdd, validator) => (
             <FormGroup validationState={validator('category') ? 'success' : 'error'}>
                 <FormControl
                     componentClass="select"
+                    value={values.category}
                     onChange={(ev) => onChange('category', ev.target.value)}>
                     {categories.map(category => (
                         <option key={category.id} value={category.id}>

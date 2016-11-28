@@ -53,7 +53,6 @@ export default React.createClass({
                             <tr key={category.id}>
                                 <td>{category.name}</td>
                                 <td>{category.creator}</td>
-                                <td>{category.creator}</td>
                                 <td>
                                     <Button bsStyle="danger" onClick={() => this.onDelete(category.id)}>
                                         ✕

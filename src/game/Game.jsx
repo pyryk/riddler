@@ -164,7 +164,7 @@ const Game = React.createClass({
                     <ControlLabel>Category</ControlLabel>
                     <FormControl
                         componentClass="select"
-                        onChange={(ev) => this.props.categoryChanged(ev.target.value)}
+                        onChange={(ev) => this.props.categoryChanged(parseInt(ev.target.value, 10))}
                         value={this.props.gameCategory.orElse(firstCategoryId).orSome(undefined)}>
                         {categories}
                     </FormControl>
